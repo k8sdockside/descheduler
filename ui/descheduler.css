@@ -1,0 +1,712 @@
+/*
+ * Every colour here is one of the app's tokens -- var(--bg), var(--text),
+ * var(--accent), var(--ok), var(--error), var(--chart-1) and the rest. The SDK
+ * writes them onto :root before the page runs and rewrites them when the user
+ * switches theme, so these pages follow the app into light or dark without a
+ * line of JavaScript. Do not pick colours.
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    padding: 16px;
+}
+
+body.panel {
+    padding: 10px 12px;
+}
+
+a {
+    color: var(--accent);
+}
+
+h1 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+
+h3 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+}
+
+p {
+    margin: 0 0 10px;
+}
+
+.note {
+    color: var(--text-dim);
+    margin: 0 0 10px;
+    max-width: 82ch;
+}
+
+.faint {
+    color: var(--text-faint);
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+}
+
+.right {
+    text-align: right;
+}
+
+/* ----- layout ------------------------------------------------------------ */
+
+.block {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+}
+
+.bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.stat {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    min-width: 108px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    align-items: start;
+}
+
+.two-up {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* ----- the verdict ------------------------------------------------------- */
+
+.verdict {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+    border-radius: 8px;
+    background: var(--bg-panel);
+    padding: 11px 14px;
+    margin-bottom: 12px;
+}
+
+.verdict-ok { border-left-color: var(--ok); }
+.verdict-warn { border-left-color: var(--warn); }
+.verdict-error { border-left-color: var(--error); }
+.verdict-none { border-left-color: var(--text-faint); }
+
+.verdict-headline {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+
+.verdict-detail {
+    color: var(--text-dim);
+    margin: 0;
+    max-width: 90ch;
+}
+
+/* ----- controls ---------------------------------------------------------- */
+
+button,
+select,
+input[type='text'],
+input[type='search'],
+input[type='number'] {
+    font: inherit;
+    color: var(--text);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 9px;
+    cursor: pointer;
+}
+
+input[type='text'],
+input[type='search'],
+input[type='number'] {
+    cursor: text;
+}
+
+button:hover,
+select:hover {
+    background: var(--bg-hover);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+button.primary {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: transparent;
+}
+
+button.danger {
+    border-color: var(--error);
+    color: var(--error);
+}
+
+button.link {
+    background: none;
+    border: none;
+    color: var(--accent);
+    padding: 0 2px;
+    text-align: left;
+}
+
+button.link:hover {
+    background: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+button.tab {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-dim);
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    padding: 5px 10px;
+}
+
+button.tab[aria-selected='true'] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+}
+
+.tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.icon {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.icon.tiny {
+    width: 10px;
+    height: 10px;
+}
+
+/* ----- fields ------------------------------------------------------------ */
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px 16px;
+}
+
+.field {
+    min-width: 0;
+}
+
+.field-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.field-sublabel {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.field-help {
+    color: var(--text-faint);
+    font-size: 11px;
+    margin: 3px 0 0;
+    line-height: 1.45;
+}
+
+.field-warn {
+    color: var(--warn);
+    font-size: 11px;
+    margin: 3px 0 0;
+}
+
+.input {
+    width: 100%;
+    max-width: 320px;
+}
+
+.input.small {
+    width: 72px;
+}
+
+.with-unit,
+.threshold {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.unit {
+    color: var(--text-faint);
+    font-size: 11px;
+}
+
+.thresholds {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.threshold span:first-child {
+    color: var(--text-dim);
+    font-size: 11px;
+    width: 46px;
+}
+
+.switch-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.switch-row label {
+    cursor: pointer;
+}
+
+.choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 4px 1px 9px;
+    font-size: 12px;
+}
+
+.chip-x {
+    border: none;
+    background: none;
+    padding: 2px;
+    color: var(--text-faint);
+    display: grid;
+    place-items: center;
+}
+
+.chip-x:hover {
+    background: none;
+    color: var(--error);
+}
+
+.chip-input {
+    border: 1px dashed var(--border);
+    background: none;
+    border-radius: 999px;
+    padding: 2px 9px;
+    width: 96px;
+    font: inherit;
+    color: var(--text);
+}
+
+/* ----- a plugin's card --------------------------------------------------- */
+
+.plugin {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-panel);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.plugin-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+}
+
+.plugin-on {
+    box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.plugin-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.plugin-name {
+    color: var(--text-faint);
+    font-size: 11px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.plugin-summary {
+    color: var(--text-dim);
+    margin: 2px 0 0;
+    max-width: 86ch;
+}
+
+.plugin-caution {
+    color: var(--warn);
+    margin: 4px 0 0;
+    max-width: 86ch;
+    font-size: 12px;
+}
+
+.plugin-body {
+    border-top: 1px solid var(--border-soft);
+    padding: 10px 12px;
+    background: var(--bg);
+}
+
+/* ----- bars and timeline -------------------------------------------------- */
+
+.bars {
+    display: grid;
+    gap: 3px;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: minmax(80px, 34%) 1fr max-content;
+    gap: 8px;
+    align-items: center;
+}
+
+.bar-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.bar-track {
+    display: flex;
+    gap: 1px;
+    background: var(--bg-raised);
+    border-radius: 3px;
+    height: 12px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    background: var(--chart-1, var(--accent));
+    border-radius: 3px 0 0 3px;
+}
+
+.bar-refused {
+    background: var(--error);
+}
+
+.bar-value {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.timeline-holder {
+    margin: 2px 0 0;
+}
+
+.timeline {
+    width: 100%;
+    height: 72px;
+    display: block;
+}
+
+.timeline-axis {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-faint);
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.spark {
+    width: 100%;
+    max-width: 240px;
+    height: 26px;
+    display: block;
+}
+
+.ring-holder {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+}
+
+.ring {
+    width: 40px;
+    height: 40px;
+}
+
+.ring-label {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+/* The Policy page's form is long, and the button that applies it belongs
+   where you are, not at the end of the scroll. */
+#foot {
+    position: sticky;
+    bottom: -1px;
+    z-index: 5;
+}
+
+#foot .block {
+    box-shadow: 0 -6px 16px -12px rgba(0, 0, 0, 0.9);
+}
+
+/* ----- tables ------------------------------------------------------------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 4px 8px 4px 0;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+th {
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+td.wrap {
+    white-space: normal;
+    min-width: 220px;
+}
+
+.scroll {
+    max-height: calc(100vh - 320px);
+    overflow: auto;
+}
+
+/* ----- checks -------------------------------------------------------------- */
+
+.checks {
+    display: grid;
+    gap: 4px;
+}
+
+.check {
+    display: grid;
+    grid-template-columns: 16px max-content 1fr;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.check-blocked { color: var(--error); }
+.check-allowed { color: var(--ok); }
+.check-unknown { color: var(--text-faint); }
+
+.check-label {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.check-detail {
+    color: var(--text-dim);
+}
+
+/* ----- tones --------------------------------------------------------------- */
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: none;
+    display: inline-block;
+    background: var(--text-faint);
+}
+
+.dot-ok { background: var(--ok); }
+.dot-warn { background: var(--warn); }
+.dot-error { background: var(--error); }
+.dot-info { background: var(--accent); }
+
+.tone-ok { color: var(--ok); }
+.tone-warn { color: var(--warn); }
+.tone-error { color: var(--error); }
+.tone-info { color: var(--accent); }
+
+.tag {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+}
+
+.tag-on {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ----- odds and ends -------------------------------------------------------- */
+
+.empty,
+.loading {
+    color: var(--text-dim);
+    padding: 18px;
+    text-align: center;
+    margin: 0;
+}
+
+.failure {
+    border: 1px solid var(--error);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--bg-panel);
+    color: var(--text);
+}
+
+.links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+dl.facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 3px 14px;
+    margin: 0;
+}
+
+dl.facts dt {
+    color: var(--text-dim);
+}
+
+dl.facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+pre.yaml {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin: 0;
+    overflow: auto;
+    max-height: 320px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: pre;
+}
+
+.problems {
+    border: 1px solid var(--error);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 0 0 10px;
+}
+
+.problems ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+}

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Descheduler activity</title>
+        <script src="/plugin-ui/_sdk/k8sdockside.js"></script>
+        <link rel="stylesheet" href="descheduler.css" />
+    </head>
+    <body>
+        <div id="page">
+            <h1>Activity</h1>
+            <p class="note">
+                Every eviction the descheduler recorded, newest first, refreshed every ten seconds. Kubernetes keeps
+                events for about an hour by default, so this is a short memory — the counters it exports to Prometheus
+                are the long one.
+            </p>
+            <div class="bar" id="filters"></div>
+            <div id="summary"></div>
+            <div id="rows"></div>
+        </div>
+        <script src="activity.js"></script>
+    </body>
+</html>

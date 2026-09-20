@@ -1,0 +1,33 @@
+{
+    "name": "k8sdockside-descheduler-plugin",
+    "version": "1.0.0",
+    "private": true,
+    "description": "The K8s Dockside plugin for the Kubernetes descheduler: what it is doing, what it has evicted, and its policy as forms rather than YAML.",
+    "license": "Apache-2.0",
+    "author": "K8s Dockside",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/k8sdockside/descheduler"
+    },
+    "type": "module",
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "build": "node scripts/build.mjs",
+        "watch": "node scripts/build.mjs --watch",
+        "preview": "node scripts/preview.mjs",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "check": "npm run typecheck && npm run test && node scripts/build.mjs --check"
+    },
+    "dependencies": {
+        "js-yaml": "^4.1.0"
+    },
+    "devDependencies": {
+        "@types/js-yaml": "^4.0.9",
+        "esbuild": "0.28.2",
+        "typescript": "^6.0.3",
+        "vitest": "^4.1.11"
+    }
+}

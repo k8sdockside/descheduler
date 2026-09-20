@@ -1,0 +1,136 @@
+{
+    "$schema": "https://raw.githubusercontent.com/k8sdockside/k8sdockside/main/docs/plugin.schema.json",
+    "id": "descheduler",
+    "name": "Descheduler",
+    "version": "1.0.0",
+    "minAppVersion": "0.0.30",
+    "tagline": "evicts pods that should be running somewhere else",
+    "icon": "scale",
+    "logo": "logo.png",
+    "category": "cost",
+    "author": "K8s Dockside",
+    "authorUrl": "https://github.com/k8sdockside",
+    "docs": "https://github.com/kubernetes-sigs/descheduler#readme",
+    "links": [
+        { "label": "GitHub", "url": "https://github.com/kubernetes-sigs/descheduler" },
+        { "label": "Policy and plugins", "url": "https://github.com/kubernetes-sigs/descheduler#policy-default-evictor-and-strategy-plugins" },
+        { "label": "Helm chart", "url": "https://github.com/kubernetes-sigs/descheduler/tree/master/charts/descheduler" },
+        { "label": "Plugin source", "url": "https://github.com/k8sdockside/descheduler" }
+    ],
+    "description": "The descheduler evicts running pods so the scheduler can place them again somewhere better: off an over-used node, away from a duplicate of themselves, off a node whose taints they no longer tolerate. It has no custom resources and no API — it is a CronJob or a Deployment, a policy in a ConfigMap, and a trail of Events on the pods it evicted. That is exactly what this plugin reads.\n\nThe overview says whether it is installed and how it runs — schedule or interval, dry run or not, which version — and what it has actually done lately. Activity is the log: every eviction it recorded, live, with the plugin that asked for it, the node the pod left, and the failures alongside the successes, because an eviction refused by a PodDisruptionBudget is the interesting one. Policy is the settings, as forms rather than YAML: every plugin with a plain sentence on what it does, thresholds and limits as fields, and the file it would write shown before anything is applied — through the app's own confirmation.\n\nPods get a panel saying whether this pod could be evicted at all, worked out from the DefaultEvictor settings actually in the policy, and nodes get one for what left them recently.",
+
+    "requires": [
+        { "kind": "configmaps", "label": "The policy, in a ConfigMap" },
+        { "kind": "events", "label": "What it evicted" },
+        { "kind": "cronjobs", "label": "Descheduler as a CronJob", "optional": true },
+        { "kind": "deployments", "label": "Descheduler as a Deployment", "optional": true }
+    ],
+
+    "ui": {
+        "kinds": [
+            "pods",
+            "nodes",
+            "events",
+            "configmaps",
+            "deployments",
+            "cronjobs",
+            "jobs",
+            "replicasets",
+            "statefulsets",
+            "daemonsets",
+            "poddisruptionbudgets"
+        ],
+        "write": true
+    },
+
+    "overview": { "entry": "overview.html" },
+
+    "views": [
+        { "id": "activity", "label": "Activity", "icon": "history", "type": "custom", "entry": "activity.html" },
+        { "id": "policy", "label": "Policy", "icon": "sliders", "type": "custom", "entry": "policy.html" },
+        {
+            "id": "own-pods",
+            "label": "Descheduler's own pods",
+            "icon": "server",
+            "kind": "pods",
+            "selector": "app.kubernetes.io/name=descheduler"
+        }
+    ],
+
+    "cards": [
+        {
+            "label": "Descheduler pods",
+            "kind": "pods",
+            "selector": "app.kubernetes.io/name=descheduler",
+            "groupBy": "status.phase",
+            "tones": { "Running": "ok", "Succeeded": "ok", "Pending": "warn", "Failed": "error", "Unknown": "warn" }
+        },
+        {
+            "label": "Nodes",
+            "kind": "nodes",
+            "groupBy": "status.conditions[Ready]",
+            "tones": { "True": "ok", "False": "error", "Unknown": "warn" }
+        }
+    ],
+
+    "charts": [
+        {
+            "id": "evicted-by-strategy",
+            "label": "Pods evicted, by plugin",
+            "attach": "overview",
+            "unit": "count",
+            "legend": "strategy",
+            "description": "Evictions in the hour up to each point, from descheduler's own descheduler_pods_evicted_total counter. Needs a Prometheus scraping the descheduler; 0.34 and older only export descheduler_pods_evicted.",
+            "query": "sum by (strategy) (increase(descheduler_pods_evicted_total[1h]))"
+        },
+        {
+            "id": "evicted-by-result",
+            "label": "Evictions attempted, by result",
+            "attach": "overview",
+            "unit": "count",
+            "legend": "result",
+            "description": "The same counter split by result, so refused evictions show up beside the successful ones.",
+            "query": "sum by (result) (increase(descheduler_pods_evicted_total[1h]))"
+        },
+        {
+            "id": "loop-duration",
+            "label": "Descheduling cycle, 90th percentile",
+            "attach": "overview",
+            "unit": "seconds",
+            "description": "How long a full pass over the cluster takes, from descheduler_loop_duration_seconds.",
+            "query": "histogram_quantile(0.9, sum by (le) (rate(descheduler_loop_duration_seconds_bucket[5m])))"
+        }
+    ],
+
+    "actions": [
+        {
+            "id": "allow-eviction",
+            "label": "Allow descheduling",
+            "icon": "check",
+            "kind": "pods",
+            "confirm": "Annotate {namespace}/{name} with descheduler.alpha.kubernetes.io/evict? The descheduler may then evict it even where its own rules would normally protect it.",
+            "done": "{name} may be descheduled",
+            "request": {
+                "type": "patch",
+                "patch": { "metadata": { "annotations": { "descheduler.alpha.kubernetes.io/evict": "true" } } }
+            }
+        },
+        {
+            "id": "clear-eviction",
+            "label": "Clear descheduling mark",
+            "icon": "undo",
+            "kind": "pods",
+            "confirm": "Remove the descheduler.alpha.kubernetes.io/evict annotation from {namespace}/{name}?",
+            "done": "{name} is back to the ordinary rules",
+            "request": {
+                "type": "patch",
+                "patch": { "metadata": { "annotations": { "descheduler.alpha.kubernetes.io/evict": null } } }
+            }
+        }
+    ],
+
+    "sections": [
+        { "id": "pod", "label": "Descheduler", "kind": "pods", "entry": "pod.html", "height": 260 },
+        { "id": "node", "label": "Descheduler", "kind": "nodes", "entry": "node.html", "height": 220 }
+    ]
+}
