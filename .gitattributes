@@ -9,3 +9,6 @@ ui/** text eol=lf
 *.jpg binary
 *.gif binary
 *.ico binary
+
+# ui/ is build output: collapsed in GitHub diffs and left out of language stats.
+ui/** linguist-generated=true
