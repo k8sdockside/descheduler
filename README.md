@@ -147,7 +147,6 @@ disagree, and so does CI.
 ```
 plugin.json              the manifest -- views, cards, charts, actions, panels
 src/
-  k8sdockside.d.ts       the bridge's types, copied from the app
   model/                 no DOM, all the logic, all the tests
     install.ts           finding the descheduler, and reading its flags
     activity.ts          events -> evictions, buckets, tallies, filters
@@ -161,7 +160,6 @@ src/
   pages/                 one .html + one .ts per page
   styles/                the app's theme tokens, no colours of its own
 scripts/
-  build.mjs              src/ -> ui/
   preview.mjs            the pages against a cluster that is not there
 ui/                      what the build writes, and what the app serves
 ```
