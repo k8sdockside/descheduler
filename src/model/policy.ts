@@ -42,7 +42,7 @@ export function parsePolicy(text: string): Parsed {
 
 /** The policy as a file again. */
 export function dumpPolicy(doc: Doc): string {
-    return dump(doc, { indent: 2, lineWidth: 100, noRefs: true, sortKeys: false, quotingType: '"' });
+    return dump(doc, { indent: 2, lineWidth: 100, noRefs: true, quoteStyle: 'double' });
 }
 
 /** An empty policy with one profile, for a cluster that has none yet. */

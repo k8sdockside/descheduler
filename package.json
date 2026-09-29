@@ -22,12 +22,11 @@
         "check": "npm run typecheck && npm run test && k8sdockside-plugin check"
     },
     "dependencies": {
-        "js-yaml": "^4.1.0"
+        "js-yaml": "^5.4.2"
     },
     "devDependencies": {
         "@k8sdockside/plugin-sdk": "^1.0.0",
-        "@types/js-yaml": "^4.0.9",
         "typescript": "^6.0.3",
-        "vitest": "^4.1.11"
+        "vitest": "^5.0.2"
     }
 }
