@@ -3,7 +3,7 @@
     "id": "descheduler",
     "name": "Descheduler",
     "version": "1.0.0",
-    "minAppVersion": "0.0.30",
+    "minAppVersion": "0.1.36",
     "tagline": "evicts pods that should be running somewhere else",
     "icon": "scale",
     "logo": "logo.png",

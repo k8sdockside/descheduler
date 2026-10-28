@@ -3658,14 +3658,15 @@ ${exception.mark.snippet}`;
         ...await actionButtons()
       ),
       el("div", { class: "checks" }, ...answer.checks.map(checkRow)),
-      mine.length ? el(
-        "div",
-        { style: "margin-top:10px" },
-        el("h3", {}, "What the descheduler did with it"),
-        evictionTable(mine, { showNamespace: false, showPod: false })
-      ) : null
+      mine.length ? evictedSection(mine) : null
     );
   });
+  function evictedSection(mine) {
+    const section = k8sdockside.ui.section({ id: "evictions", title: "What the descheduler did with it", count: mine.length, what: "the evictions" });
+    section.root.style.marginTop = "10px";
+    section.body.append(evictionTable(mine, { showNamespace: false, showPod: false }));
+    return section.root;
+  }
   async function actionButtons() {
     let offered = [];
     try {
